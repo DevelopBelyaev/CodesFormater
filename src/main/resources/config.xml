@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+ <bean id="context" class="com.mycompany.codesformatter.formatter.FormatterState"> 
+</bean>
+ <bean id="streamReader" class="com.mycompany.codesformatter.readers.FileStreamReader"> 
+<constructor-arg value="Codes/code1.java"/>
+</bean>
+<bean id="streamWriter" class="com.mycompany.codesformatter.writers.StringStreamWriter">
+</bean>
+
+<bean id = "defaultHandler" class = 
+"com.mycompany.codesformatter.conextManagers.DefaultStateHandler"/>
+<bean id = "newLineHandler" class=
+"com.mycompany.codesformatter.conextManagers.NewLineHandler"/>
+<bean id = "levelUpHandler" class=
+"com.mycompany.codesformatter.conextManagers.LevelUpHandler"/>
+<bean id = "levelDownHandler" class=
+"com.mycompany.codesformatter.conextManagers.LevelDownHandler"/>
+
+<bean id = "defaultHandlers" class = "java.util.ArrayList">
+    <constructor-arg>
+    <list>
+        <ref bean = "defaultHandler"/>
+    </list>
+    </constructor-arg>
+</bean>
+<bean id = "endLineHandlers" class = "java.util.ArrayList">
+    <constructor-arg>
+    <list>
+        <ref bean = "defaultHandler"/>
+        <ref bean = "newLineHandler"/>
+    </list>
+    </constructor-arg>
+</bean>
+<bean id = "openBraceHandlers" class = "java.util.ArrayList">
+    <constructor-arg>
+    <list>
+        <ref bean = "levelUpHandler"/>
+        <ref bean = "newLineHandler"/>
+    </list>
+    </constructor-arg>
+</bean>
+<bean id = "closeBraseHandlers" class = "java.util.ArrayList">
+    <constructor-arg>
+    <list>
+        <ref bean = "levelDownHandler"/>
+        <ref bean = "newLineHandler"/>
+    </list>
+    </constructor-arg>
+</bean>
+<bean id = "handlersMap" class = "java.util.HashMap">
+    <constructor-arg>
+    <map>
+        <entry key = "{" value-ref = "openBraceHandlers"/>
+        <entry key = "}" value-ref = "closeBraseHandlers"/>
+        <entry key = ";" value-ref = "endLineHandlers"/>
+        <entry key = "\n" value-ref = "endLineHandlers"/>
+    </map>
+    </constructor-arg>
+</bean>
+
+<bean id = "priorityMap" class = "java.util.HashMap">
+    <constructor-arg>
+    <map>
+        <entry key-ref="defaultHandler" value ="10"/>      
+        <entry key-ref = "levelUpHandler" value = "0"/>  
+        <entry key-ref = "levelDownHandler" value = "0"/>
+        <entry key-ref = "newLineHandler" value = "10"/>    
+    </map>
+    </constructor-arg>
+</bean>
+
+<bean id = "sortRule" class = 
+"com.mycompany.codesformatter.conextManagers.RangeRule">
+    <constructor-arg ref = "priorityMap"/>
+</bean>
+
+<bean id = "rulez" class = "java.util.ArrayList">    
+    <constructor-arg>
+    <list>
+        <ref bean = "sortRule"/>
+    </list>
+    </constructor-arg>
+</bean>
+
+<bean id = "contextHandler" class=
+"com.mycompany.codesformatter.conextManagers.FormatterContextHandler">
+    <constructor-arg ref = "handlersMap"/>
+    <constructor-arg ref = "rulez"/>
+    <constructor-arg ref = "defaultHandlers"/>
+</bean>
+
+
+
+<bean 
+    id = "formatter" 
+    class="com.mycompany.codesformatter.formatter.Formatter">
+    <constructor-arg ref = "contextHandler"/>
+</bean>
+
+</beans>

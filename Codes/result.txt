@@ -1,0 +1,12 @@
+private String readText(String fileName) throws IOException {
+	String text;
+	{
+		File sourceFile = new File(fileName);
+		if (!sourceFile.exists()) throw new FileNotFoundException("File not found!");
+		BufferedReader reader = new BufferedReader(new FileReader(fileName));
+	}
+	char[] charBuff = new char[(int)sourceFile.length()];
+	reader.read(charBuff);
+	return new String(charBuff);
+}
+<Syntax error>}
